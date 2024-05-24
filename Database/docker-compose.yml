@@ -9,6 +9,7 @@ services:
       MYSQL_DATABASE: online_shop
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin1234
+    # host: '127.0.0.1'
     ports:
       - "3306:3306"
     volumes:
