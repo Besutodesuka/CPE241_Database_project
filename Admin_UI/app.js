@@ -13,11 +13,11 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// Set view engine
-app.set('view engine', 'ejs');
-
 // Serve static files
 app.use(express.static('public'));
+
+// Set view engine
+app.set('view engine', 'ejs');
 
 // Routes
 app.use('/', userRoutes);
