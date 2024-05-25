@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/">sign up</a>
+        </div>
+        <form action="/signup" method="POST">
+            <div class="profile">
+                <label for="profile">profile</label>
+                <input type="file" id="profile" name="profile" accept="image/*">
+            </div>
+            <div class="input-group">
+                <input type="text" name="shopName" placeholder="Shop Name" required>
+            </div>
+            <div class="input-group">
+                <input type="text" name="address" placeholder="Address" required>
+            </div>
+            <div class="input-group">
+                <input type="tel" name="phone" placeholder="Phone" required>
+            </div>
+            <div class="input-group">
+                <input type="email" name="email" placeholder="Email" required>
+            </div>
+            <button type="submit">CREATE ACCOUNT</button>
+        </form>
+    </div>
+</body>
+</html>
