@@ -24,7 +24,7 @@ CREATE TABLE product (
 );
 
 CREATE TABLE cart (
-    cart_id INT(11) PRIMARY KEY,
+    cart_id INT(11) AUTO_INCREMENT PRIMARY KEY,
     buyer_id INT(11),
     product_id INT(11),
     quantity INT(11),

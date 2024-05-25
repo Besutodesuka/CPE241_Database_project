@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Detail</title>
+    <link rel="stylesheet" href="/product_styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Product Detail</h1>
+            <nav>
+                <a href="/">Back</a>
+                <a href="#">cart</a>
+            </nav>
+        </header>
+        <div class="product-detail">
+            <h2><%= product.product_name %></h2>
+            <p><%= product.price %></p>
+            <p><%= product.product_description %></p>
+            <form action="/add-to-cart" method="post">
+                <input type="hidden" name="product_id" value="<%= product.product_id %>">
+                <label for="quantity">Quantity:</label>
+                <input type="number" name="quantity" value="1" min="1">
+                <button type="submit">Add to Cart</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
