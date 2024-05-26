@@ -2,6 +2,7 @@ const db = require('../db');
 
 exports.renderCheckoutPage = async (req, res) => {
   const userId = req.session.user_id;
+  console.log(req.body);
   try {
     // Fetch addresses, delivery providers, and payment methods from the database
     const [addresses] = await db.execute('SELECT address_id, address FROM user_address WHERE user_id = ?', [userId]);
@@ -28,6 +29,7 @@ exports.renderCheckoutPage = async (req, res) => {
 
 exports.handleBuy = async (req, res) => {
   const { address_id, delivery_id, payment_method, total_price, items } = req.body;
+  console.log(delivery_id);
   const userId = req.session.user_id;
   const connection = await db.getConnection();
   try {
@@ -38,13 +40,12 @@ exports.handleBuy = async (req, res) => {
       [parseFloat(total_price, 10), payment_method]
     );
     const transactionId = transactionResult.insertId;
-    console.log(transactionId)
     // Insert into orders table
-    for (const item of items) {
-      console.log(parseFloat(item.total_price, 10))
+    for (const item of JSON.parse(items)) {
+      console.log(item)
       await connection.execute(
         'INSERT INTO orders (buyer_id, product_id, quantity, transaction_id, total_price, order_date, order_status, delivery_id) VALUES (?, ?, ?, ?, ?, NOW(), ?, ?)',
-        [userId, parseInt(item.product_id, 10), parseInt(item.quantity, 10), parseInt(transactionId, 10), parseFloat(item.total_price, 10), 'Pending', parseInt(delivery_id, 10)]
+        [userId, parseInt(item.id, 10), parseInt(item.quantity, 10), parseInt(transactionId, 10), item.price, 'Pending', delivery_id]
       );
     }
     await connection.commit();
