@@ -25,14 +25,16 @@
   <main>
     <div class="product-list">
       <% products.forEach(product => { %>
-        <div class="product-item">
-          <div class="product-image"></div>
-          <div class="product-info">
-            <h3><%= product.product_name %></h3>
-            <p><%= product.price %></p>
-            <p><%= product.product_description %></p>
+          <div class="product-item">
+            <a href="/product/<%= product.product_id %>">
+              <div class="product-image"></div>
+            </a>
+            <div class="product-info">
+              <h3><%= product.product_name %></h3>
+              <p><%= product.price %></p>
+              <p><%= product.product_description %></p>
+            </div>
           </div>
-        </div>
       <% }); %>
     </div>
   </main>
