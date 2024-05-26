@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cart Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      width: 60%;
+      margin: 0 auto;
+      padding: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background-color: #f9f9f9;
+    }
+    .cart-header {
+      background-color: #ccc;
+      padding: 10px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #ccc;
+      padding: 10px 0;
+    }
+    .cart-item img {
+      width: 50px;
+      height: 50px;
+    }
+    .cart-item-details {
+      flex-grow: 1;
+      margin-left: 20px;
+    }
+    .cart-item-actions {
+      display: flex;
+      align-items: center;
+    }
+    .cart-item-actions input[type="number"] {
+      width: 50px;
+      margin-right: 10px;
+    }
+    .cart-item-actions button {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .total-price {
+      text-align: right;
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+    .checkout {
+      text-align: right;
+      margin-top: 20px;
+    }
+    .checkout button {
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="cart-header">
+      <h1>Cart Page</h1>
+      <a href="/home">Back</a>
+    </div>
+
+    <div id="cart-items">
+      <% cartItems.forEach(item => { %>
+        <div class="cart-item">
+          <img src="<%= item.image %>" alt="Product Image">
+          <div class="cart-item-details">
+            <p>Item name: <%= item.name %></p>
+            <p>Price: $<%= item.price %></p>
+          </div>
+          <div class="cart-item-actions">
+            <input type="number" value="<%= item.quantity %>" min="1" data-id="<%= item.id %>" class="quantity-input">
+            <button class="remove-item" data-id="<%= item.id %>">x</button>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+
+    <div class="total-price">
+      Total: $<span id="total-price"><%= totalPrice %></span>
+    </div>
+
+    <div class="checkout">
+      <button id="checkout-button">Check out</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const quantityInputs = document.querySelectorAll('.quantity-input');
+      const removeButtons = document.querySelectorAll('.remove-item');
+      const totalPriceElement = document.getElementById('total-price');
+      const checkoutButton = document.getElementById('checkout-button');
+
+      const updateTotalPrice = () => {
+        let total = 0;
+        quantityInputs.forEach(input => {
+          const price = parseFloat(input.closest('.cart-item').querySelector('.cart-item-details p:nth-child(2)').textContent.replace('Price: $', ''));
+          const quantity = parseInt(input.value);
+          total += price * quantity;
+        });
+        totalPriceElement.textContent = total.toFixed(2);
+      };
+
+      quantityInputs.forEach(input => {
+        input.addEventListener('change', (event) => {
+          const newQuantity = event.target.value;
+          const itemId = event.target.getAttribute('data-id');
+          fetch('/cart/update-cart-item', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ cart_id: itemId, quantity: newQuantity })
+          }).then(response => response.text())
+            .then(data => {
+              console.log(data);
+              updateTotalPrice();
+            });
+        });
+      });
+
+      removeButtons.forEach(button => {
+        button.addEventListener('click', (event) => {
+          const itemId = event.target.getAttribute('data-id');
+          fetch('/cart/remove-cart-item', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ cart_id: itemId })
+          }).then(response => response.text())
+            .then(data => {
+              console.log(data);
+              event.target.closest('.cart-item').remove();
+              updateTotalPrice();
+            });
+        });
+      });
+
+      checkoutButton.addEventListener('click', () => {
+        // Store cart items in localStorage before navigating to checkout page
+        const cartItems = [];
+        document.querySelectorAll('.cart-item').forEach(cartItem => {
+          const itemId = cartItem.querySelector('.quantity-input').getAttribute('data-id');
+          const quantity = cartItem.querySelector('.quantity-input').value;
+          const price = parseFloat(cartItem.querySelector('.cart-item-details p:nth-child(2)').textContent.replace('Price: $', ''));
+          const name = cartItem.querySelector('.cart-item-details p:nth-child(1)').textContent.replace('Item name: ', '');
+          cartItems.push({ id: itemId, name, price, quantity});
+        });
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        window.location.href = 'cart/checkout';
+      });
+
+      updateTotalPrice();
+    });
+  </script>
+</body>
+</html>

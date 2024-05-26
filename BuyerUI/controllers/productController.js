@@ -1,17 +1,21 @@
 const db = require('../db');
 
 exports.homePage = async (req, res) => {
-  try {
-    // if (searchQuery == ''){
-    //   const [rows] = await db.execute('SELECT * FROM PRODUCT_INFO');
-    // }else{
-    //   const [rows] = await db.execute('SELECT * FROM PRODUCT_INFO WHERE product_name LIKE ?', [`%${searchQuery}%`]);
-    // }
-    const [rows] = await db.execute('SELECT * FROM product');
-    res.render('index', { products: rows });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send('Server error');
+  if (req.session.loggedin) {
+    try {
+      // if (searchQuery == ''){
+      //   const [rows] = await db.execute('SELECT * FROM PRODUCT_INFO');
+      // }else{
+      //   const [rows] = await db.execute('SELECT * FROM PRODUCT_INFO WHERE product_name LIKE ?', [`%${searchQuery}%`]);
+      // }
+      const [rows] = await db.execute('SELECT * FROM product');
+      res.render('index', { products: rows ,user_id: req.session.user_id });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Server error');
+    }
+  } else {
+      res.send('Please login to view this page!');
   }
 };
 
