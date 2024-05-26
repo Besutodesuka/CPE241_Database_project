@@ -48,6 +48,9 @@ exports.handleBuy = async (req, res) => {
         [userId, parseInt(item.id, 10), parseInt(item.quantity, 10), parseInt(transactionId, 10), item.price, 'Pending', delivery_id]
       );
     }
+    await connection.execute(
+      'DELETE FROM cart WHERE buyer_id = ?', [userId]
+    );
     await connection.commit();
     
     res.redirect('/home');
